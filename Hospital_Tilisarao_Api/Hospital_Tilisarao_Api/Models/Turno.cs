@@ -13,18 +13,18 @@ namespace Hospital_Tilisarao_Api.Models
         public int Id { get; set; }
         public DateTime HoraInicio{ get; set; }
         public DateTime Dia { get; set; }
-        [ForeignKey(nameof(Medico_Id))]
-        public int Medico_Id { get; set; }
-        [ForeignKey(nameof(Paciente_Id))]
-        public int Paciente_Id { get; set; }
+        [ForeignKey(nameof(MedicoId))]
+        public int MedicoId { get; set; }
+        [ForeignKey(nameof(PacienteId))]
+        public int PacienteId { get; set; }
 
         public Turno(int id, DateTime horaInicio, DateTime dia, int medico_Id, int paciente_Id)
         {
             Id = id;
             HoraInicio = horaInicio;
             Dia = dia;
-            Medico_Id = medico_Id;
-            Paciente_Id = paciente_Id;
+            MedicoId = medico_Id;
+            PacienteId = paciente_Id;
         }
     }
 }

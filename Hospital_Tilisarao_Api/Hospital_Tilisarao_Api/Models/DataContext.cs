@@ -12,6 +12,7 @@ namespace Hospital_Tilisarao_Api.Models
         {
 
         }
-      
+        public DbSet<Paciente> Paciente { get; set; }
+        public DbSet<Medico> Medico { get; set; }
     }
 }
