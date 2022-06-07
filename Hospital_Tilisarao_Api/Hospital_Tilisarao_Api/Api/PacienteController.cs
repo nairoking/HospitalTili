@@ -1,6 +1,7 @@
 ﻿using Hospital_Tilisarao_Api.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -56,13 +57,13 @@ namespace Hospital_Tilisarao_Api.Api
 		{
 			try
 			{
-				/*string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+				string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
 					password: loginView.Clave,
 					salt: System.Text.Encoding.ASCII.GetBytes(config["Salt"]),
 					prf: KeyDerivationPrf.HMACSHA1,
 					iterationCount: 1000,
-					numBytesRequested: 256 / 8));*/
-				string hashed = loginView.Clave;
+					numBytesRequested: 256 / 8));
+				
 				var p = await contexto.Paciente.FirstOrDefaultAsync(x => x.Email == loginView.Usuario);
 				if (p == null || p.Clave != hashed)
 				{
@@ -106,18 +107,87 @@ namespace Hospital_Tilisarao_Api.Api
 
         // POST api/<PacienteController>
         [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
+		[AllowAnonymous]
+		public async Task<IActionResult> Post([FromBody] Paciente entidad)
+		{
+			try
+			{
+				string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+					password: entidad.Clave,
+					salt: System.Text.Encoding.ASCII.GetBytes(config["Salt"]),
+					prf: KeyDerivationPrf.HMACSHA1,
+					iterationCount: 1000,
+					numBytesRequested: 256 / 8));
+				entidad.Clave = hashed;
 
-        // PUT api/<PacienteController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
+				if (ModelState.IsValid)
+				{
+					var p = await contexto.Paciente.FirstOrDefaultAsync(x => x.Email == entidad.Email);
+					if (p != null)
+					{
+						return BadRequest("Este Email ya esta ligado a una cuenta");
+                    }
+                    else
+                    {
+						
+						await contexto.Paciente.AddAsync(entidad);
+					    contexto.SaveChanges();
+					   return CreatedAtAction(nameof(Get), new { id = entidad.Id }, entidad);
 
-        // DELETE api/<PacienteController>/5
-        [HttpDelete("{id}")]
+                    }
+					
+				}
+				return BadRequest();
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(ex);
+			}
+		}
+
+		// PUT api/<controller>/5
+		[HttpPut("actualizar")]
+		public async Task<IActionResult> Put([FromBody] Paciente pac)
+		{
+			try
+			{
+				var email = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
+				Paciente original = await contexto.Paciente.FirstOrDefaultAsync(x => x.Email == email);
+
+				if (pac.Id != original.Id)
+				{
+					return Unauthorized();
+				}
+
+
+				if (pac.Clave == null || pac.Clave == "")
+				{
+					pac.Clave = original.Clave;
+				}
+				else
+				{
+					string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+					   password: pac.Clave,
+					   salt: System.Text.Encoding.ASCII.GetBytes(config["Salt"]),
+					   prf: KeyDerivationPrf.HMACSHA1,
+					   iterationCount: 1000,
+					   numBytesRequested: 256 / 8));
+					pac.Clave = hashed;
+				}
+				contexto.Entry(original).CurrentValues.SetValues(pac);
+				await contexto.SaveChangesAsync();
+
+				return (IActionResult)await contexto.Paciente.FirstOrDefaultAsync(x => x.Email == email);
+
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(ex);
+			}
+		}
+
+		// DELETE api/<PacienteController>/5
+		[HttpDelete("{id}")]
         public void Delete(int id)
         {
         }

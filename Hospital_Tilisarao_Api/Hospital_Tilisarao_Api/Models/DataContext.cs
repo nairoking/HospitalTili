@@ -14,5 +14,6 @@ namespace Hospital_Tilisarao_Api.Models
         }
         public DbSet<Paciente> Paciente { get; set; }
         public DbSet<Medico> Medico { get; set; }
+        public DbSet<Turno> Turno { get; set; }
     }
 }
