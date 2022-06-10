@@ -12,20 +12,15 @@ namespace Hospital_Tilisarao_Api.Models
         [Key]
         public int Id { get; set; }
 
-        [ForeignKey(nameof(Historial_Id))]
-        public int Historial_Id { get; set; }
+        [ForeignKey(nameof(HistorialId))]
+        public int HistorialId { get; set; }
 
-        [ForeignKey(nameof(Turno_Id))]
-        public int Turno_Id { get; set; }
-
+        [ForeignKey(nameof(MedicoId))]
+        public int MedicoId { get; set; }
+        public DateTime Fecha { get; set; }
+        public String MyProperty { get; set; }
         public string Descripcion { get; set; }
 
-        public ItemHistorial(int id, int historial_Id, int turno_Id, string descripcion)
-        {
-            Id = id;
-            Historial_Id = historial_Id;
-            Turno_Id = turno_Id;
-            Descripcion = descripcion;
-        }
+        
     }
 }
