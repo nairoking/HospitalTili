@@ -15,6 +15,7 @@ namespace Hospital_Tilisarao_Api.Api
 {
     
     [Route("api/[controller]")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ApiController]
     public class MedicoController : ControllerBase
     {
@@ -35,10 +36,12 @@ namespace Hospital_Tilisarao_Api.Api
 
         // GET api/<controller>/GetAll
         [HttpGet("GetAll")]
-        public async Task<IActionResult> GetAll()
+        public async Task<ActionResult<List<Turno>>> GetAll()
         {
             try
             {
+
+                var entidad = await contexto.Medico.ToListAsync();
                 return Ok(await contexto.Medico.ToListAsync());
             }
             catch (Exception ex)

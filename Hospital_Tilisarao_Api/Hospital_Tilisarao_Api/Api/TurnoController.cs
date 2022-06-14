@@ -28,12 +28,7 @@ namespace Hospital_Tilisarao_Api.Api
             this.contexto = applicationDbContext;
             this.config = configuration;
         }
-        // GET: api/<TurnoController>
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
+      
 
         // GET api/<TurnoController>/5
         [HttpGet("{id}")]
@@ -43,7 +38,7 @@ namespace Hospital_Tilisarao_Api.Api
         }
 
         [HttpGet("turnoPendiente")]
-        public async Task<ActionResult<List<Turno>>> GetTurno()
+        public async Task<ActionResult<List<Turno>>> Get()
         {
 
             try
@@ -54,23 +49,14 @@ namespace Hospital_Tilisarao_Api.Api
                 var paciente = await contexto.Paciente.FirstOrDefaultAsync(x => x.Email == email);
 
                 var turnos = await contexto.Turno.Where(x => x.PacienteId == paciente.Id && x.Fecha> DateTime.Now).Include(x=> x.medico).ToListAsync();
-
-              
-
                 return turnos;
-
-
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message.ToString());
-
             }
-
-
-
-
         }
+        
 
 
         // POST api/<TurnoController>

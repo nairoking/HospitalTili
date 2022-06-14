@@ -19,17 +19,6 @@ namespace Hospital_Tilisarao_Api.Models
         public string Especialidad { get; set; }
         public string Matricula { get; set; }
 
-        public Medico(int id, string nombre, string apellido, string dni, string telefono, string email, string clave, string especialidad, string matricula)
-        {
-            Id = id;
-            Nombre = nombre;
-            Apellido = apellido;
-            Dni = dni;
-            Telefono = telefono;
-            Email = email;
-            Clave = clave;
-            Especialidad = especialidad;
-            Matricula = matricula;
-        }
+       
     }
 }
