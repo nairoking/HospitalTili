@@ -11,7 +11,7 @@ namespace Hospital_Tilisarao_Api.Models
     {
         [Key]
         public int Id { get; set; }
-        public String HoraInicio{ get; set; }
+        public string HoraInicio{ get; set; }
         public DateTime Fecha { get; set; }
         [ForeignKey(nameof(MedicoId))]
         public int MedicoId { get; set; }

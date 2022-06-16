@@ -56,7 +56,22 @@ namespace Hospital_Tilisarao_Api.Api
                 return BadRequest(ex.Message.ToString());
             }
         }
-        
+
+        [HttpPost("turnoDisponible")]
+        public async Task<ActionResult<List<Turno>>> putTurno([FromBody] Turno entidad)
+        {
+
+            try
+            {
+                var turnos = await contexto.Turno.Where(x => x.MedicoId == entidad.MedicoId && x.Fecha == Convert.ToDateTime(entidad.Fecha)).ToListAsync();
+                return turnos;
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message.ToString());
+            }
+        }
+
 
 
         // POST api/<TurnoController>
@@ -65,13 +80,17 @@ namespace Hospital_Tilisarao_Api.Api
         {
             try
             {
-                if (ModelState.IsValid)
-                {
-                    await contexto.Turno.AddAsync(entidad);
-                    contexto.SaveChanges();
-                    return CreatedAtAction(nameof(Get), new { id = entidad.Id }, entidad);
-                }
-                return BadRequest();
+
+                var email = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
+
+                var paciente = await contexto.Paciente.FirstOrDefaultAsync(x => x.Email == email);
+                entidad.PacienteId = paciente.Id;
+               
+                await contexto.Turno.AddAsync(entidad);
+                contexto.SaveChanges();
+                return CreatedAtAction(nameof(Get), new { id = entidad.Id }, entidad);
+               
+               
             }
             catch (Exception ex)
             {

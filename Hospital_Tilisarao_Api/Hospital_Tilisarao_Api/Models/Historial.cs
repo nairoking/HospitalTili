@@ -11,13 +11,13 @@ namespace Hospital_Tilisarao_Api.Models
     {
         [Key]
         public int Id { get; set; }
-        [ForeignKey(nameof(Paciente_Id))]
-        public int Paciente_Id { get; set; }
+        [ForeignKey(nameof(PacienteId))]
+        public int PacienteId { get; set; }
 
-        public Historial(int id, int paciente_Id)
+        public Historial(int id, int pacienteId)
         {
             Id = id;
-            Paciente_Id = paciente_Id;
+            PacienteId = pacienteId;
         }
     }
 }
